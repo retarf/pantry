@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+    db:
+      image: postgres:14.2
+      environment:
+        POSTGRES_USER: ${DB_USER}
+        POSTGRES_PASSWORD: ${DB_PASS}
+        POSTGRES_DB: ${DB_NAME}
+        POSTGRES_PORT: ${DB_PORT}
+      restart: always
+
+    backend:
+      build:
+        context: .
+        dockerfile: config/backend.Dockerfile
+        args:
+         DB_HOST: ${DB_HOST}
+         DB_PORT: ${DB_PORT}
+      ports:
+       - "${BE_PORT}:${BE_PORT}"
+      depends_on:
+        - db
+      volumes:
+        - ./backend:/backend
+      env_file:
+        .env
